@@ -6,7 +6,7 @@ import Topbar from '../layouts/Topbar'
 import Sidebar from '../layouts/Sidebar'
 import AuthLayout from '../layouts/AuthLayout.'
 import '../assets/styles/Layout1.css'
-import TrelloBoard from '../pages/TrelloBoard'
+import Trello from '../pages/Trello'
 
 export default function AppRoutes() {
   return (
@@ -21,7 +21,8 @@ export default function AppRoutes() {
           {/* <Sidebar> */}
           {/* <Route path="/" element={<Login />} /> */}
           <Route path='/dashboard' element={<Dashboard />} />
-          <Route path='/trelloboard' element={<TrelloBoard />} />
+
+          <Route path='/trelloboard' element={<Trello />} />
           {/* </Sidebar> */}
         </Route>
       </Routes>
