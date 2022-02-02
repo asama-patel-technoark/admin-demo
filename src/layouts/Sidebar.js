@@ -162,6 +162,18 @@ export default function PersistentDrawerLeft(props) {
             </ListItemIcon>
             <ListItemText primary={'Trello Board'} />
           </ListItem>
+          <ListItem
+            button
+            // key={text}
+            onClick={() => {
+              navigate('/apidata', { replace: true })
+            }}
+          >
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Api Data'} />
+          </ListItem>
         </List>
         <Divider />
         <List>
