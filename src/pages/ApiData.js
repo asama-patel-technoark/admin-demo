@@ -21,6 +21,9 @@ import SaveAlt from '@material-ui/icons/SaveAlt'
 import Search from '@material-ui/icons/Search'
 import ViewColumn from '@material-ui/icons/ViewColumn'
 import Alert from '@material-ui/lab/Alert'
+import TextField from '@material-ui/core/TextField'
+import Dialog from '@material-ui/core/Dialog'
+import Box from '@material-ui/core/Box'
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -51,6 +54,16 @@ const api = axios.create({
 })
 
 function App() {
+  const [open, setOpen] = useState(false)
+
+  const handleOpen = () => {
+    setOpen(true)
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
   var columns = [
     { title: 'id', field: 'id', hidden: true },
     {
@@ -178,6 +191,33 @@ function App() {
 
   return (
     <div>
+      <button type='button' onClick={handleOpen}>
+        Create record
+      </button>
+      <Dialog open={open}>
+        <Box>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault()
+              handleClose()
+            }}
+          >
+            <div>
+              <TextField name='first_name' placeholder='First Name' />
+            </div>
+            <div>
+              <TextField name='last_name' placeholder='Last Name' />
+            </div>
+            <div>
+              <TextField name='email' placeholder='Email' />
+            </div>
+            <div>
+              <button type='submit'>Submit</button>
+            </div>
+          </form>
+        </Box>
+      </Dialog>
+
       <Grid container spacing={1}>
         <Grid item xs={3}></Grid>
         <Grid item xs={6}>
