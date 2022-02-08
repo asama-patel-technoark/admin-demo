@@ -21,6 +21,7 @@
     "material-table": "^1.69.3",
     "react-avatar": "^4.0.0",
     "react-beautiful-dnd": "^13.1.0",
+    "react-cookie": "^4.1.1",
     "react-hook-form": "^7.26.0",
     "react-router": "^6.2.1",
     "react-router-dom": "^6.2.1",
