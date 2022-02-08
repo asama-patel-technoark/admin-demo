@@ -54,19 +54,18 @@ export default function Login(props) {
         },
       )
       let { data } = await api.post('/auth', values)
-      console.log(data.data)
-
-      if (data.code == 200) {
+      if (data.code == 306) {
+        setToast({
+          state: true,
+          message: data.message,
+          color: 'danger',
+        })
+      } else if (data.code == 200) {
         localStorage.setItem('authToken', `Bearer ${data.authToken}`)
         localStorage.setItem('authuser', JSON.stringify(data.data))
 
         // props.history.push('/dashboard')
         navigate('/dashboard')
-      }
-      if (localStorage.getItem('authToken')) {
-        alert('Login Success')
-      } else {
-        alert('Invalid credentials')
       }
     } catch (error) {
       if (
