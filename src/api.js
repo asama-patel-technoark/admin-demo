@@ -11,16 +11,14 @@ api.interceptors.request.use(
       !localStorage.getItem('authToken') &&
       localStorage.getItem('authToken') === null &&
       window.location.pathname !== '/login' &&
-      window.location.pathname !== '/signup' &&
-      !window.location.pathname.includes('/change-password')
+      window.location.pathname !== '/signup'
     ) {
       window.location.href = '/login'
     } else if (
-      window.location.pathname === '/login' ||
-      window.location.pathname.includes('/change-password')
+      window.location.pathname === '/login'
       // ||  window.location.pathname === '/signup'
     ) {
-      // config.headers['Authorization'] = localStorage.getItem('authToken');
+      // config.headers['Authorization'] = localStorage.getItem('authToken')
     } else {
       config.headers['Authorization'] = localStorage.getItem('authToken')
     }
@@ -32,6 +30,20 @@ api.interceptors.request.use(
   },
 )
 
+api.interceptors.response.use(
+  function (response) {
+    return response
+  },
+  function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    if (error.response.status == 401) {
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  },
+)
+
 export const toFormData = (object) => {
   const formData = new FormData()
   Object.keys(object).forEach((key) => {
@@ -39,7 +51,5 @@ export const toFormData = (object) => {
   })
   return formData
 }
-
-// export const url="http://10.4.22.184:8082/fileAccess/"
 
 export default api

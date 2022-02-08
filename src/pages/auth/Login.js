@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
+import FileUploadPage from '../FileUploadPage'
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -20,29 +22,51 @@ import VisibilityOff from '@material-ui/icons/VisibilityOff'
 import api from '../../api'
 // import ReCAPTCHA from 'react-google-recaptcha'
 import Snackbar from '../../components/Snackbar'
+import { useCookies } from 'react-cookie'
 
 export default function Login(props) {
+  const navigate = useNavigate()
   const [checked1, setChecked1] = useState(true)
   const [disableButton, setDisableButton] = useState(false)
   const [toast, setToast] = useState({ state: false, message: '' })
   const [showPassword, setShowPassword] = useState(false)
+  const [cookies, setCookie] = useCookies(['mfaToken'])
   const handleChange1 = (event) => {
     setChecked1(event.target.checked)
   }
+
   const handleSubmit = async (values) => {
     // ev.preventDefault();
     try {
       // setIsLoading(true);
+      api.interceptors.request.use(
+        function (config) {
+          // Do something before request is sent
+
+          if (cookies.mfaToken) {
+            config.headers['MFAToken'] = cookies.mfaToken
+          }
+          return config
+        },
+        function (error) {
+          // Do something with request error
+          return Promise.reject(error)
+        },
+      )
       let { data } = await api.post('/auth', values)
-      localStorage.setItem('authToken', `Bearer ${data.authToken}`)
-      // localStorage.setItem('user', JSON.stringify(data.data));
-      localStorage.setItem('username', data.data)
-      props.history.push('/dashboard')
+      console.log(data.data)
+
       if (data.code == 200) {
         localStorage.setItem('authToken', `Bearer ${data.authToken}`)
-        localStorage.setItem('username', data.data)
+        localStorage.setItem('authuser', JSON.stringify(data.data))
 
-        props.history.push('/dashboard')
+        // props.history.push('/dashboard')
+        navigate('/dashboard')
+      }
+      if (localStorage.getItem('authToken')) {
+        alert('Login Success')
+      } else {
+        alert('Invalid credentials')
       }
     } catch (error) {
       if (
@@ -56,11 +80,16 @@ export default function Login(props) {
           color: 'danger',
         })
       } else {
-        setToast(error.data)
+        setToast({
+          state: true,
+          message: error.response.data.errors,
+          color: 'danger',
+        })
       }
     }
     // resetForm();
   }
+
   return (
     <>
       <Snackbar toast={toast} setToast={setToast} />
@@ -73,15 +102,14 @@ export default function Login(props) {
                   <Grid item md={10} lg={8} xl={4} className='mx-auto'>
                     <Formik
                       validationSchema={yup.object({
-                        password: yup.string().required('Required'),
-                        username: yup
-                          .string()
-                          .email('Invalid email address')
-                          .required('Required'),
+                        authpassword: yup.string().required('Required'),
+                        authuser: yup.string(),
+                        // .email('Invalid email address')
+                        // .required('Required'),
                       })}
                       initialValues={{
-                        username: '',
-                        password: '',
+                        authuser: '',
+                        authpassword: '',
                       }}
                       onSubmit={handleSubmit}
                     >
@@ -96,7 +124,7 @@ export default function Login(props) {
                           <div className='mb-4'>
                             <Field
                               component={TextField}
-                              name='username'
+                              name='authuser'
                               fullWidth
                               variant='outlined'
                               label='Email address'
@@ -113,7 +141,7 @@ export default function Login(props) {
                           <div className='mb-3'>
                             <Field
                               component={TextField}
-                              name='password'
+                              name='authpassword'
                               fullWidth
                               variant='outlined'
                               // id="textfield-password"
@@ -175,6 +203,7 @@ export default function Login(props) {
           </div>
           {/* <Footer /> */}
         </div>
+        <FileUploadPage />
       </div>
     </>
   )
