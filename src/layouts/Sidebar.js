@@ -154,6 +154,18 @@ export default function PersistentDrawerLeft(props) {
             button
             // key={text}
             onClick={() => {
+              navigate('/logout', { replace: true })
+            }}
+          >
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Logout'} />
+          </ListItem>
+          <ListItem
+            button
+            // key={text}
+            onClick={() => {
               navigate('/trelloboard', { replace: true })
             }}
           >
